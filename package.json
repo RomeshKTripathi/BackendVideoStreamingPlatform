@@ -2,17 +2,19 @@
   "name": "backendvideostreamingplatform",
   "version": "1.0.0",
   "description": "backend of a video streaming platform Backend Project",
+  "type": "module",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "javascript",
-    "Backend",
-    "video",
-    "streaming",
-    "platform"
+    "Backend"
   ],
   "author": "Romesh K Tripathi",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
 }
