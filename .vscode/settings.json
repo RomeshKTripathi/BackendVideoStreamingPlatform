@@ -1,0 +1,35 @@
+{
+    "todohighlight.defaultStyle": {},
+    "todohighlight.include": [
+        "**/*.js",
+        "**/*.jsx",
+        "**/*.ts",
+        "**/*.tsx",
+        "**/*.html",
+        "**/*.php",
+        "**/*.css",
+        "**/*.scss"
+    ],
+    "todohighlight.keywords": [
+        "DEBUG:",
+        "REVIEW:",
+        {
+            "text": "NOTE:",
+            "color": "#ff0000",
+            "backgroundColor": "yellow",
+            "overviewRulerColor": "grey"
+        },
+        {
+            "text": "HACK:",
+            "color": "#000",
+            "isWholeLine": false,
+        },
+        {
+            "text": "TODO",
+            "color": "Cyan",
+            "padding":"10px",
+            "backgroundColor": ""
+            //other styling properties goes here ... 
+        }
+    ]
+}
