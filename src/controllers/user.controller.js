@@ -149,10 +149,48 @@ const changePassword = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, {}, "Password Changed"));
 });
 
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "Current User fetched Successfully"));
+});
+
+const updateDetails = asyncHandler(async (req, res) => {
+  const { fullname, email } = req.body;
+  if (!fullname || !email) {
+    throw new ApiError("All fields are required");
+  }
+
+  const user = req.user;
+
+  if (user.fullname === fullname.trim() && user.email === email.trim())
+    return res
+      .status(200)
+      .json(new ApiResponse(200, user, "Details Updated Successfully"));
+
+  const updatedUser = await User.findByIdAndUpdate(user._id, {
+    $set: {
+      fullname,
+      email,
+    },
+  }).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, updatedUser, "Details Updated Successfully"));
+});
+
 /**
  * Change Avatar
  * Change cover Image
  * change fullname
  */
 
-export { registerUser, loginUser, logOut, changePassword };
+export {
+  registerUser,
+  loginUser,
+  logOut,
+  changePassword,
+  getCurrentUser,
+  updateDetails,
+};
