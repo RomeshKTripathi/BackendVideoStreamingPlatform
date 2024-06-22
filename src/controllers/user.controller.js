@@ -158,7 +158,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 const updateDetails = asyncHandler(async (req, res) => {
   const { fullname, email } = req.body;
   if (!fullname || !email) {
-    throw new ApiError("All fields are required");
+    throw new ApiError(400, "All fields are required");
   }
 
   const user = req.user;
@@ -180,11 +180,53 @@ const updateDetails = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, updatedUser, "Details Updated Successfully"));
 });
 
-/**
- * Change Avatar
- * Change cover Image
- * change fullname
- */
+const updateAvatar = asyncHandler(async (req, res) => {
+  // extract local path of File
+  const avatarLocalPath = req.files?.avatar[0].path;
+  if (!avatarLocalPath) {
+    throw new ApiError(400, "Avatar is required");
+  }
+
+  // upload it on cloudinary
+  const newAvatar = await uploadOnCloudinary(avatarLocalPath);
+
+  if (!newAvatar.url) {
+    throw new ApiError(500, "Error while uploading Avatar");
+  }
+  // update new url in database
+  const user = await User.findByIdAndUpdate(req.user._id, {
+    $set: {
+      avatar: newAvatar.url,
+    },
+  }).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Avatar Updated Successfully"));
+});
+
+const updateCoverImage = asyncHandler(async (req, res) => {
+  const { coverImageLocalPath } = req.file?.path;
+
+  if (!coverImageLocalPath) {
+    throw new ApiError(400, "Cover Image is Missing");
+  }
+
+  const coverImageCloudinaryPath = uploadOnCloudinary(coverImageLocalPath);
+  if (!coverImageCloudinaryPath) {
+    throw new ApiError(500, "Error while uploading coverImage on cloudinary");
+  }
+
+  const user = await User.findByIdAndUpdate(req.user?._id, {
+    $set: {
+      coverImage: coverImageCloudinaryPath.url,
+    },
+  }).select("-password");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, user, "Cover Image updated Successfully"));
+});
 
 export {
   registerUser,
@@ -193,4 +235,6 @@ export {
   changePassword,
   getCurrentUser,
   updateDetails,
+  updateAvatar,
+  updateCoverImage,
 };
