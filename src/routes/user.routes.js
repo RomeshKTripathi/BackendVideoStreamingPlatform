@@ -1,9 +1,12 @@
 import { Router } from "express";
 import {
   changePassword,
+  getChannel,
+  getCurrentUser,
   logOut,
   loginUser,
   registerUser,
+  subscribe,
   updateAvatar,
   updateDetails,
 } from "../controllers/user.controller.js";
@@ -40,5 +43,7 @@ router.route("/update-avatar").post(
   ]),
   updateAvatar
 );
-
+router.route("/get-user").post(verifyJWT, getCurrentUser);
+router.route("/subscribe").post(verifyJWT, subscribe);
+router.route("/get-channel").post(getChannel);
 export default router;

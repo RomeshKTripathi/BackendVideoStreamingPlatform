@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Subscription } from "../models/subscription.model.js";
 // Registration of the user.
 
 const generateAccessAndRefreshToken = async (userId) => {
@@ -228,6 +229,89 @@ const updateCoverImage = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, user, "Cover Image updated Successfully"));
 });
 
+const subscribe = asyncHandler(async (req, res) => {
+  const { channelId } = req.query;
+
+  if (!channelId?.trim()) {
+    throw new ApiError(401, "Channel Id is Required");
+  }
+
+  if (!(await User.findById(channelId))) {
+    throw new ApiError(400, "Invalid Channel Id");
+  }
+
+  await Subscription.create({
+    channel: channelId,
+    subscriber: req.user._id,
+  });
+
+  return res.status(200).json(new ApiResponse(200, {}, "Channel Subscribed"));
+});
+
+const getChannel = asyncHandler(async (req, res) => {
+  const { username } = req.query;
+
+  if (!username?.trim()) {
+    throw new ApiError(400, "channelId required");
+  }
+
+  const result = await User.aggregate([
+    {
+      $match: {
+        username,
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "channel",
+        as: "subscribers",
+      },
+    },
+    {
+      $lookup: {
+        from: "subscriptions",
+        localField: "_id",
+        foreignField: "subscriber",
+        as: "subscribed",
+      },
+    },
+    {
+      $addFields: {
+        subscriptions: {
+          $size: "$subscribed",
+        },
+        subscribersCount: {
+          $size: "$subscribers",
+        },
+        isSubscribed: {
+          $cond: {
+            if: { $in: [req.user ? _id : "$subscribers.subscriber"] },
+            then: true,
+            else: false,
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        fullname,
+        email,
+        username,
+        subscribers,
+        subscriptions,
+        coverImage,
+        avatar,
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result[0], "channel found successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -237,4 +321,6 @@ export {
   updateDetails,
   updateAvatar,
   updateCoverImage,
+  subscribe,
+  getChannel,
 };
