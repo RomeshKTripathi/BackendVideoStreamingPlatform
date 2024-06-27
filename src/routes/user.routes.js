@@ -11,7 +11,10 @@ import {
   updateDetails,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
-import { verifyJWT } from "../middlewares/auth.middleware.js";
+import {
+  addUserIfLoggedInUser,
+  verifyJWT,
+} from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -45,5 +48,5 @@ router.route("/update-avatar").post(
 );
 router.route("/get-user").post(verifyJWT, getCurrentUser);
 router.route("/subscribe").post(verifyJWT, subscribe);
-router.route("/get-channel").post(getChannel);
+router.route("/get-channel").post(addUserIfLoggedInUser, getChannel);
 export default router;
