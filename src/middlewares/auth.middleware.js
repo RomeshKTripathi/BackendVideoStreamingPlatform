@@ -28,3 +28,21 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     throw new ApiError(401, error?.message || "Invalid Access Token");
   }
 });
+
+/**
+ * If user is loggedin then add user data to req.
+ */
+export const addUserIfLoggedInUser = asyncHandler(async (req, res, next) => {
+  const token = req?.cookies?.accessToken;
+  if (!token) return next();
+
+  const tokenInformation = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+  const user = await User.findById(tokenInformation?._id).select(
+    "-password, -refreshToken"
+  );
+
+  if (!user) return next();
+
+  req.user = user;
+  return next();
+});
