@@ -66,7 +66,6 @@ const registerUser = asyncHandler(async (req, res) => {
 const loginUser = asyncHandler(async (req, res) => {
   // extract user data from request
   const { email, username, password } = req.body;
-  console.log(req.body);
   // validation of data
   if (!username && !email) {
     throw new ApiError(400, "Username/email is required");
@@ -249,6 +248,7 @@ const subscribe = asyncHandler(async (req, res) => {
 });
 
 const getChannel = asyncHandler(async (req, res) => {
+  console.log(req.method);
   const { username } = req.query;
 
   if (!username?.trim()) {
@@ -286,7 +286,13 @@ const getChannel = asyncHandler(async (req, res) => {
           $size: "$subscription",
         },
         subscribed: {
-          $in: [req.user?._id, "$subscribers"],
+          $cond: {
+            if: req?.user === undefined,
+            then: "undefined",
+            else: {
+              $in: [req.use?._id, "$subscribers"],
+            },
+          },
         },
       },
     },
@@ -299,13 +305,17 @@ const getChannel = asyncHandler(async (req, res) => {
         avatar: 1,
         subscriptionsCount: 1,
         subscribersCount: 1,
+        subscribed: 1,
       },
     },
   ]);
+  const responseMessage = result.length
+    ? "Channel found Successfully"
+    : "No channel found !";
 
   return res
     .status(200)
-    .json(new ApiResponse(200, result[0], "channel found successfully"));
+    .json(new ApiResponse(200, result[0] ?? {}, responseMessage));
 });
 
 export {
