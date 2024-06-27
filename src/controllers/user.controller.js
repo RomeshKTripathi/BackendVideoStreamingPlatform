@@ -273,36 +273,32 @@ const getChannel = asyncHandler(async (req, res) => {
       $lookup: {
         from: "subscriptions",
         localField: "_id",
-        foreignField: "subscriber",
-        as: "subscribed",
+        foreignField: "subscribers",
+        as: "subscription",
       },
     },
     {
       $addFields: {
-        subscriptions: {
-          $size: "$subscribed",
-        },
         subscribersCount: {
           $size: "$subscribers",
         },
-        isSubscribed: {
-          $cond: {
-            if: { $in: [req.user ? _id : "$subscribers.subscriber"] },
-            then: true,
-            else: false,
-          },
+        subscriptionsCount: {
+          $size: "$subscription",
+        },
+        subscribed: {
+          $in: [req.user?._id, "$subscribers"],
         },
       },
     },
     {
       $project: {
-        fullname,
-        email,
-        username,
-        subscribers,
-        subscriptions,
-        coverImage,
-        avatar,
+        fullname: 1,
+        username: 1,
+        email: 1,
+        coverImage: 1,
+        avatar: 1,
+        subscriptionsCount: 1,
+        subscribersCount: 1,
       },
     },
   ]);
