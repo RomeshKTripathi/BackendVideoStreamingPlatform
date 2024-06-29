@@ -12,10 +12,12 @@ const playlistSchema = new Schema(
     videos: {
       type: [Schema.Types.ObjectId],
       ref: "video",
+      required: true,
     },
     owner: {
       type: Schema.Types.ObjectId,
       ref: "user",
+      required: true,
     },
   },
   { timestamps: true }
