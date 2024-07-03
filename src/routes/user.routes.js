@@ -32,21 +32,16 @@ router.route("/register").post(
   registerUser
 );
 
-router.route("/login").post(loginUser);
-router.route("/logout").post(verifyJWT, logOut);
-router.route("/change-password").post(verifyJWT, changePassword);
-router.route("/update-details").post(verifyJWT, updateDetails);
-router.route("/update-avatar").post(
-  verifyJWT,
-  upload.fields([
-    {
-      name: "avatar",
-      maxCount: 1,
-    },
-  ]),
-  updateAvatar
-);
-router.route("/get-user").post(verifyJWT, getCurrentUser);
-router.route("/subscribe").post(verifyJWT, subscribe);
-router.route("/get-channel").post(addUserIfLoggedInUser, getChannel);
+// TODO: rewrite all routes
+
+// router.route("/login").post(loginUser);
+// router.route("/logout").post(verifyJWT, logOut);
+// router.route("/change-password").patch(verifyJWT, changePassword);
+// router.route("/update-details").patch(verifyJWT, updateDetails);
+// router
+//   .route("/update-avatar")
+//   .patch(verifyJWT, upload.single("/avatar"), updateAvatar);
+// router.route("/get-user").post(verifyJWT, getCurrentUser);
+// router.route("/subscribe").post(verifyJWT, subscribe);
+// router.route("/get-channel").post(addUserIfLoggedInUser, getChannel);
 export default router;
