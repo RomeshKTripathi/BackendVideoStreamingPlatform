@@ -374,4 +374,5 @@ export {
   updateCoverImage,
   subscribe,
   getChannel,
+  getWatchHistory,
 };

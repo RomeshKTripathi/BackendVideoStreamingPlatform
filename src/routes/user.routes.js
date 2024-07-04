@@ -3,6 +3,7 @@ import {
   changePassword,
   getChannel,
   getCurrentUser,
+  getWatchHistory,
   logOut,
   loginUser,
   registerUser,
@@ -34,14 +35,15 @@ router.route("/register").post(
 
 // TODO: rewrite all routes
 
-// router.route("/login").post(loginUser);
-// router.route("/logout").post(verifyJWT, logOut);
-// router.route("/change-password").patch(verifyJWT, changePassword);
-// router.route("/update-details").patch(verifyJWT, updateDetails);
-// router
-//   .route("/update-avatar")
-//   .patch(verifyJWT, upload.single("/avatar"), updateAvatar);
-// router.route("/get-user").post(verifyJWT, getCurrentUser);
-// router.route("/subscribe").post(verifyJWT, subscribe);
-// router.route("/get-channel").post(addUserIfLoggedInUser, getChannel);
+router.route("/login").post(loginUser);
+router.route("/logout").post(verifyJWT, logOut);
+router.route("/change-password").patch(verifyJWT, changePassword);
+router.route("/update-details").patch(verifyJWT, updateDetails);
+router
+  .route("/update-avatar")
+  .patch(verifyJWT, upload.single("/avatar"), updateAvatar);
+router.route("/get-user").get(verifyJWT, getCurrentUser);
+router.route("/subscribe").post(verifyJWT, subscribe);
+router.route("/get-channel").get(addUserIfLoggedInUser, getChannel);
+router.route("/get-watch-history").get(verifyJWT, getWatchHistory);
 export default router;
