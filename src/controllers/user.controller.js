@@ -4,7 +4,6 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Subscription } from "../models/subscription.model.js";
-import mongoose from "mongoose";
 // Registration of the user.
 
 const generateAccessAndRefreshToken = async (userId) => {
