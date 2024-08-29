@@ -2,6 +2,7 @@ import { ApiError } from "../utils/ApiError.js";
 import jwt from "jsonwebtoken";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
+import { Video } from "../models/video.model.js";
 
 export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
@@ -45,4 +46,17 @@ export const addUserIfLoggedInUser = asyncHandler(async (req, res, next) => {
 
   req.user = user;
   return next();
+});
+
+export const verifyVideoAuthor = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) throw new ApiError(401, "Video Id is Required to delete Video");
+  const video = Video.findOne({ _id: id, owner: req.user._id });
+  if (!video)
+    throw new ApiError(
+      401,
+      "Unauthorized Request, Only owner can delete video"
+    );
+
+  next();
 });

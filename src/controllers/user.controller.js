@@ -4,7 +4,6 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.service.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Subscription } from "../models/subscription.model.js";
-// Registration of the user.
 
 const generateAccessAndRefreshToken = async (userId) => {
   try {
@@ -19,6 +18,7 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
+// Register New User
 const registerUser = asyncHandler(async (req, res) => {
   const { fullname, email, username, password } = req.body;
   if (
@@ -63,6 +63,7 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "User registerd successfully"));
 });
 
+// Login User and create Session.
 const loginUser = asyncHandler(async (req, res) => {
   // extract user data from request
   const { email, username, password } = req.body;
