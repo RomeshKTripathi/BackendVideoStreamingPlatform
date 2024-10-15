@@ -2,7 +2,10 @@ import { Router } from "express";
 import { upload } from "../middlewares/multer.middleware.js";
 import {
   deleteVideo,
+  getAllVideos,
   getVideoById,
+  togglePublishStatus,
+  updateDetails,
   uploadVideo,
 } from "../controllers/video.controller.js";
 import {
@@ -27,7 +30,11 @@ router.route("/upload").post(
   uploadVideo
 );
 
-router.route("/:id").get(getVideoById);
+router.route("/video/:id").get(getVideoById);
 router.route("/delete/:id").delete(verifyJWT, verifyVideoAuthor, deleteVideo);
-
+router.route("/my-videos").get(verifyJWT, getAllVideos);
+router.route("/update/:id").patch(verifyJWT, verifyVideoAuthor, updateDetails);
+router
+  .route("/publish/:id")
+  .patch(verifyJWT, verifyVideoAuthor, togglePublishStatus);
 export default router;

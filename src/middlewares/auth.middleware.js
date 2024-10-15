@@ -8,10 +8,10 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
   try {
     const token =
       req.cookies?.accessToken ||
-      req.header("Autherization")?.replace("Bearer ", "");
+      req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      throw new ApiError(401, "Unautherized Request");
+      throw new ApiError(401, "Unauthorized Request");
     }
 
     const tokenInformation = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -21,12 +21,17 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
     );
 
     if (!user) {
-      throw new ApiError(401, "Invalid Access Token");
+      return next(new ApiError(401, "Invalid Access Token"));
     }
     req.user = user;
     next();
   } catch (error) {
-    throw new ApiError(401, error?.message || "Invalid Access Token");
+    if (error.name === "TokenExpiredError") {
+      return res
+        .status(401)
+        .json(new ApiError(401, "Token expired, please login again"));
+    }
+    next(new ApiError(401, error?.message || "Invalid Access Token"));
   }
 });
 
@@ -50,13 +55,19 @@ export const addUserIfLoggedInUser = asyncHandler(async (req, res, next) => {
 
 export const verifyVideoAuthor = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  if (!id) throw new ApiError(401, "Video Id is Required to delete Video");
-  const video = Video.findOne({ _id: id, owner: req.user._id });
-  if (!video)
-    throw new ApiError(
-      401,
-      "Unauthorized Request, Only owner can delete video"
-    );
+  if (!id) {
+    throw "Video ID is required for this operation.";
+  }
+  try {
+    const video = await Video.findOne({ _id: id, owner: req.user._id });
+    if (!video) {
+      throw "Video not found or you do not have permission to delete this video.";
+    }
 
-  next();
+    // Video found and user is the owner, move to the next middleware
+    next();
+  } catch (err) {
+    // Pass the error to the global error handler
+    return next(err);
+  }
 });
