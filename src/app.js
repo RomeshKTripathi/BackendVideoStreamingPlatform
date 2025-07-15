@@ -24,10 +24,20 @@ app.use(cookieParser());
 import userRouter from "./routes/user.routes.js";
 import videoRouter from "./routes/video.routes.js";
 import { GlobalErrorHandler } from "./middlewares/errorHandler.middleware.js";
+import { ApiError } from "./utils/ApiError.js";
 
 // routes declaration
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/videos", videoRouter);
+app.use("*", (req, res, next) => {
+  const err = new ApiError(
+    404,
+    `Route ${req.originalUrl} not found`,
+    "ERR_ROUTE_NOT_FOUND"
+  );
+  next(err);
+});
+
 app.use(GlobalErrorHandler);
 
 // controllers

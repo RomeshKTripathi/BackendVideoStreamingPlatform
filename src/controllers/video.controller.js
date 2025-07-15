@@ -38,7 +38,6 @@ const updateDetails = asyncHandler(async (req, res) => {
   // thumbnail, title, description, isPublished can be updated.
   const { id } = req.params;
   const { title, description, isPublished } = req.body;
-  console.log(req.body);
   const result = await Video.updateOne(
     { _id: id },
     {
@@ -58,8 +57,8 @@ const getVideoById = asyncHandler(async (req, res) => {
   if (!id) {
     throw new Error(401, "Video id is required.");
   }
-
   const video = await Video.findById(id);
+  await Video.updateOne({ _id: id }, { $inc: { views: 1 } });
 
   return res
     .status(200)

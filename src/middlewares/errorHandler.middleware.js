@@ -1,7 +1,12 @@
-import { ApiError } from "../utils/ApiError.js";
-
 export const GlobalErrorHandler = (err, req, res, next) => {
-  res
-    .status(err.statusCode ?? 500)
-    .json(new ApiError(500, "Something went wrong !", err));
+  const statusCode = err.statusCode || 500;
+  return res.status(statusCode).json({
+    statusCode,
+    success: false,
+    error: {
+      message: err.message || "Internal Server Error",
+      code: err.errorCode || "ERR_UNKNOWN",
+      details: err.details || null,
+    },
+  });
 };

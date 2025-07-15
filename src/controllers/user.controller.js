@@ -26,6 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
   ) {
     throw new ApiError(400, "All fields are required");
   }
+  console.log("finding user with email | username");
 
   const userExistence = await User.findOne({
     $or: [{ email }, { username }],
@@ -37,7 +38,9 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverImageLocalPath = req.files?.coverImage[0]?.path;
+  const coverImageLocalPath = req.files?.coverImage
+    ? req.files?.coverImage[0]?.path
+    : "";
 
   if (!avatarLocalPath) throw new ApiError(400, "Avatar image is required");
 
@@ -78,7 +81,7 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 
   if (!user) {
-    throw new ApiError(401, "No User find with email/username");
+    throw new ApiError(401, "No User found with email/username");
   }
 
   if (!(await user.isPasswordCorrect(password))) {
@@ -133,9 +136,16 @@ const logOut = asyncHandler(async (req, res) => {
 });
 
 const changePassword = asyncHandler(async (req, res) => {
-  console.log(req.body);
-  console.log(req.user);
   const { newPassword, oldPassword } = req.body;
+
+  if (!newPassword || !oldPassword) {
+    throw new ApiError(
+      400,
+      "Missing required fields: newPassword / oldPassword.",
+      "ERR_MISSING_PASSWORD_FIELDS"
+    );
+  }
+
   const user = await User.findById(req.user?._id);
 
   const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
@@ -167,14 +177,21 @@ const updateDetails = asyncHandler(async (req, res) => {
   if (user.fullname === fullname.trim() && user.email === email.trim())
     return res
       .status(200)
-      .json(new ApiResponse(200, user, "Details Updated Successfully"));
+      .json(new ApiResponse(200, user, "No changes applied"));
 
-  const updatedUser = await User.findByIdAndUpdate(user._id, {
-    $set: {
-      fullname,
-      email,
+  const existingUser = await User.findOne({ email });
+  if (existingUser && existingUser._id.toString() !== user._id.toString()) {
+    throw new ApiError(409, "Email is already in use", "ERR_EMAIL_EXISTS");
+  }
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    {
+      $set: { fullname, email },
     },
-  }).select("-password");
+    {
+      new: true, // ✅ Return updated document
+    }
+  ).select("-password");
 
   return res
     .status(200)
@@ -320,6 +337,8 @@ const getChannel = asyncHandler(async (req, res) => {
 });
 
 const getWatchHistory = asyncHandler(async (req, res) => {
+  console.log("Watch History");
+
   const user = await User.aggregate([
     {
       $match: {
@@ -361,6 +380,7 @@ const getWatchHistory = asyncHandler(async (req, res) => {
       },
     },
   ]);
+  console.log(user);
 });
 
 export {
