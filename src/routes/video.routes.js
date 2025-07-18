@@ -12,6 +12,7 @@ import {
   verifyJWT,
   verifyVideoAuthor,
 } from "../middlewares/auth.middleware.js";
+import { addNewComment } from "../controllers/comment.controller.js";
 
 const router = Router();
 
