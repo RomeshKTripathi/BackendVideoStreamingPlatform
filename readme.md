@@ -175,7 +175,7 @@ MONGO_URI=mongodb://localhost:27017/yourDB
 Romesh Tripathi
 Aspiring Full-Stack Engineer passionate about backend architecture, scalable APIs, and clean code design.
 
-- 🧠 MERN + TypeScript focused
+- 🧠 MERN focused
 - 📊 Strengths in aggregation, modular services, and secure API development
 - 💼 LinkedIn 🛠️ Portfolio 🌐 GitHub
 
