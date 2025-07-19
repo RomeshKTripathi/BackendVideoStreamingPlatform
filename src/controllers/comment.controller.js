@@ -3,6 +3,13 @@ import { Comment } from "../models/comment.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
+import {
+  validateCommentVideoRelation,
+  validateInputFields,
+  validateObjectId,
+  validateUserCommentOwnership,
+  updateDocument,
+} from "../utils/UtilityMethods.js";
 
 const healthCheck = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, null, "Server is healthy"));
@@ -91,43 +98,6 @@ const getCommentsOfVideo = asyncHandler(async (req, res) => {
 });
 
 // Utility Functions
-
-function validateInputFields(fields) {
-  for (const field of fields) {
-    if (!field || !field.trim()) throw new ApiError(400, "Fields are missing");
-  }
-}
-function validateObjectId(ids) {
-  for (const ObjectId of ids) {
-    if (!mongoose.Types.ObjectId.isValid(ObjectId)) {
-      throw new ApiError(400, "Invalid ObjectId format");
-    }
-  }
-}
-
-function validateUserCommentOwnership(comment, user) {
-  if (comment.owner.toString() !== user._id.toString()) {
-    throw new ApiError(
-      403,
-      "You do not have permission to modify this comment"
-    );
-  }
-}
-function validateCommentVideoRelation(comment, video_id) {
-  if (comment.video.toString() !== video_id) {
-    throw new ApiError(400, "Comment does not belong to the specified video");
-  }
-}
-async function updateDocument(commentId, updatedComment) {
-  const comment = await Comment.findByIdAndUpdate(
-    commentId,
-    { content: updatedComment },
-    { new: true }
-  );
-  if (!comment) {
-    throw new ApiError(404, "Comment not found for update");
-  }
-}
 
 export {
   addNewComment,
