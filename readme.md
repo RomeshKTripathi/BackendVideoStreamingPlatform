@@ -1,5 +1,7 @@
 # 🎬 Video Streaming Platform – Backend
 
+![Video Streaming Backend Banner](./public/temp/banner.png)
+
 A modular, production-grade backend built with **Node.js, Express, and MongoDB**, powering core features of a video streaming application — from secure user authentication and file uploads to channel subscriptions, commenting, and video lifecycle management.
 
 ---
@@ -45,8 +47,6 @@ src/
 public/
 └── temp/ # Temporary file storage (.gitkeep)
 ```
-
----
 
 ---
 
