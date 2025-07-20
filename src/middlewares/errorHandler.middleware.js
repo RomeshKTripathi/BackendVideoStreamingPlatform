@@ -5,8 +5,9 @@ export const GlobalErrorHandler = (err, req, res, next) => {
     success: false,
     error: {
       message: err.message || "Internal Server Error",
-      code: err.errorCode || "ERR_UNKNOWN",
+      errorCode: err.errorCode || "ERR_UNKNOWN",
       details: err.details || null,
+      ...err,
     },
   });
 };
