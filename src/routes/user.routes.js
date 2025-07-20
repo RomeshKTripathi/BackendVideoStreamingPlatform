@@ -33,10 +33,10 @@ router.route("/register").post(
   registerUser
 );
 
-// TODO: rewrite all routes
-
 router.route("/login").post(loginUser);
 router.route("/channel").get(addUserIfLoggedInUser, getChannel);
+
+// These routes require authentication
 router.use(verifyJWT);
 router.route("/logout").post(logOut);
 router.route("/change-password").patch(changePassword);

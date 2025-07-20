@@ -257,6 +257,16 @@ const subscribe = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid Channel Id");
   }
 
+  // check if already subscribed
+  const existingSubscription = await Subscription.findOneAndDelete({
+    channel: channelId,
+    subscriber: req.user._id,
+  });
+  if (existingSubscription) {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "Channel Unsubscribed"));
+  }
   await Subscription.create({
     channel: channelId,
     subscriber: req.user._id,
@@ -308,7 +318,7 @@ const getChannel = asyncHandler(async (req, res) => {
             if: req?.user === undefined,
             then: "undefined",
             else: {
-              $in: [req.use?._id, "$subscribers"],
+              $in: [req.user._id, "$subscribers"],
             },
           },
         },
