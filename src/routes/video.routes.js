@@ -6,13 +6,14 @@ import {
   getVideoById,
   togglePublishStatus,
   updateDetails,
+  updateThumbnail,
   uploadVideo,
+  videoRouteHealthCheck,
 } from "../controllers/video.controller.js";
 import {
   verifyJWT,
   verifyVideoAuthor,
 } from "../middlewares/auth.middleware.js";
-import { addNewComment } from "../controllers/comment.controller.js";
 
 const router = Router();
 
@@ -30,7 +31,17 @@ router.route("/upload").post(
   ]),
   uploadVideo
 );
-
+router.route("/thumbnail/:id").post(
+  verifyJWT,
+  upload.fields([
+    {
+      name: "thumbnail",
+      maxCount: 1,
+    },
+  ]),
+  updateThumbnail
+);
+router.route("/health-check").get(videoRouteHealthCheck);
 router.route("/video/:id").get(getVideoById);
 router.route("/delete/:id").delete(verifyJWT, verifyVideoAuthor, deleteVideo);
 router.route("/my-videos").get(verifyJWT, getAllVideos);
