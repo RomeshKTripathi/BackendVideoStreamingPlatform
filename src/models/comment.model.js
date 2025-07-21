@@ -16,12 +16,11 @@ const commentSchema = new Schema(
       ref: "user",
       required: true,
     },
-    totalLikes: {
+    likeCount: {
       type: Number,
       default: 0,
     },
   },
   { timestamps: true }
 );
-
 export const Comment = mongoose.model("Comment", commentSchema);

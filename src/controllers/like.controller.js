@@ -23,14 +23,15 @@ export const toggleVideoLike = asyncHandler(async (req, res) => {
   });
 
   if (unliked) {
-    await Video.findByIdAndUpdate(videoId, { $inc: { likeCount: -1 } });
+    await Video.updateOne({ _id: videoId }, { $inc: { likeCount: -1 } });
     return res
       .status(200)
       .json(new ApiResponse(200, createLikeResponseObject(false), "Unliked"));
   }
 
-  const like = await Like.create({ video: videoId, likedBy: userId });
-  await Video.findByIdAndUpdate(videoId, { $inc: { likeCount: 1 } });
+  await Like.create({ video: videoId, likedBy: userId });
+  await Video.updateOne({ _id: videoId }, { $inc: { likeCount: 1 } });
+
   return res
     .status(200)
     .json(new ApiResponse(200, createLikeResponseObject(true), "Liked"));
@@ -48,14 +49,15 @@ export const toggleCommentLike = asyncHandler(async (req, res) => {
   });
 
   if (unliked) {
-    await Comment.findByIdAndUpdate(commentId, { $inc: { likeCount: -1 } });
+    await Comment.updateOne({ _id: commentId }, { $inc: { likeCount: -1 } });
     return res
       .status(200)
       .json(new ApiResponse(200, createLikeResponseObject(false), "Unliked"));
   }
 
-  const like = await Like.create({ comment: commentId, likedBy: userId });
-  await Comment.findByIdAndUpdate(commentId, { $inc: { likeCount: 1 } });
+  await Like.create({ comment: commentId, likedBy: userId });
+  await Comment.updateOne({ _id: commentId }, { $inc: { likeCount: 1 } });
+
   return res
     .status(200)
     .json(new ApiResponse(200, createLikeResponseObject(true), "Liked"));
