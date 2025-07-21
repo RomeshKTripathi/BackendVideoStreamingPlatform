@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import { Comment } from "../models/comment.model.js";
+import { ApiError } from "./ApiError.js";
+
 export function fieldValue(fields) {
   for (const field of fields) {
     if (!field || field.trim() === "") {
