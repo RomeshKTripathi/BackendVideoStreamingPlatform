@@ -2,6 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { validateObjectId } from "../utils/UtilityMethods.js";
 import { Like } from "../models/like.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Video } from "../models/video.model.js";
 
 const createLikeResponseObject = (isLiked) => {
   return {
@@ -21,13 +22,14 @@ export const toggleVideoLike = asyncHandler(async (req, res) => {
   });
 
   if (unliked) {
+    await Video.findByIdAndUpdate(videoId, { $inc: { likeCount: -1 } });
     return res
       .status(200)
       .json(new ApiResponse(200, createLikeResponseObject(false), "Unliked"));
   }
 
   const like = await Like.create({ video: videoId, likedBy: userId });
-
+  await Video.findByIdAndUpdate(videoId, { $inc: { likeCount: 1 } });
   return res
     .status(200)
     .json(new ApiResponse(200, createLikeResponseObject(true), "Liked"));
