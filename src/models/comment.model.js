@@ -16,6 +16,10 @@ const commentSchema = new Schema(
       ref: "user",
       required: true,
     },
+    totalLikes: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
