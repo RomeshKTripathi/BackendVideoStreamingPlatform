@@ -42,7 +42,7 @@ router.route("/thumbnail/:id").post(
   updateThumbnail
 );
 router.route("/health-check").get(videoRouteHealthCheck);
-router.route("/video/:id").get(getVideoById);
+router.route("/:id").get(getVideoById);
 router.route("/delete/:id").delete(verifyJWT, verifyVideoAuthor, deleteVideo);
 router.route("/my-videos").get(verifyJWT, getAllVideos);
 router.route("/update/:id").patch(verifyJWT, verifyVideoAuthor, updateDetails);
