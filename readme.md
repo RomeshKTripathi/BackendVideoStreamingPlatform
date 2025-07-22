@@ -177,6 +177,6 @@ Aspiring Full-Stack Engineer passionate about backend architecture, scalable API
 
 - 🧠 MERN focused
 - 📊 Strengths in aggregation, modular services, and secure API development
-- 💼 LinkedIn 🛠️ Portfolio 🌐 GitHub
+- 💼 [LinkedIn](https://www.linkedin.com/in/romesh-tripathi-53518a1b8/) 🛠️ Portfolio 🌐[GitHub](https://github.com/RomeshKTripathi)
 
 ---
